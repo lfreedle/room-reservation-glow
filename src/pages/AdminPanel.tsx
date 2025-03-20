@@ -1,14 +1,16 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useReservations } from '@/hooks/useReservations';
+import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/Header';
 import AdminCalendar from '@/components/AdminCalendar';
 import RecurringEventForm from '@/components/RecurringEventForm';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RecurringEvent } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CalendarIcon, Clock, CalendarDays, Trash2 } from 'lucide-react';
+import { CalendarIcon, Clock, CalendarDays, Trash2, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -23,11 +25,31 @@ const AdminPanel = () => {
   } = useReservations();
   
   const [activeTab, setActiveTab] = useState<string>("calendar");
+  const { isAuthenticated, logout } = useAuth();
+  const navigate = useNavigate();
+  
+  // Redirect to login if not authenticated
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate('/login');
+    }
+  }, [isAuthenticated, navigate]);
   
   const handleAddRecurringEvent = (event: Omit<RecurringEvent, 'id'>) => {
     const success = addRecurringEvent(event);
     return success;
   };
+  
+  const handleLogout = () => {
+    logout();
+    toast.success('You have been logged out');
+    navigate('/');
+  };
+  
+  // If not authenticated, don't render the admin panel content
+  if (!isAuthenticated) {
+    return null;
+  }
   
   return (
     <div className="min-h-screen bg-gray-50">
@@ -38,11 +60,18 @@ const AdminPanel = () => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
+          className="flex justify-between items-center mb-8"
         >
-          <h1 className="text-3xl font-bold tracking-tight mb-2">Admin Panel</h1>
-          <p className="text-muted-foreground mb-8">
-            Manage room reservations and recurring events.
-          </p>
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight mb-2">Admin Panel</h1>
+            <p className="text-muted-foreground">
+              Manage room reservations and recurring events.
+            </p>
+          </div>
+          <Button variant="outline" onClick={handleLogout} className="gap-2">
+            <LogOut className="h-4 w-4" />
+            Logout
+          </Button>
         </motion.div>
         
         <Tabs defaultValue="calendar" onValueChange={setActiveTab} value={activeTab}>

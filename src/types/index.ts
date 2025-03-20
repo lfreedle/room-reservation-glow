@@ -17,7 +17,7 @@ export interface Reservation {
   guestName: string;
   guestEmail: string;
   guestPhone: string;
-  eventDescription?: string; // New field for event description
+  eventDescription: string; // Required field for event description
   createdAt: Date;
   isRecurring?: boolean;
   recurringId?: string;
@@ -41,5 +41,5 @@ export interface ReservationFormData {
   guestName: string;
   guestEmail: string;
   guestPhone: string;
-  eventDescription: string; // Added event description field
+  eventDescription: string; // Required field for event description
 }
