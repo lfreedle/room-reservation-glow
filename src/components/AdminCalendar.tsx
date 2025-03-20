@@ -1,10 +1,9 @@
-
 import { useState, useEffect } from 'react';
 import { Calendar } from '@/components/ui/calendar';
 import { Reservation, RecurringEvent, Room } from '@/types';
 import { eachDayOfInterval, isSameDay, format, isBefore, isAfter, addMonths } from 'date-fns';
 import { cn } from '@/lib/utils';
-import { Clock, User, Mail, Phone } from 'lucide-react';
+import { Clock, User, Mail, Phone, FileText } from 'lucide-react';
 
 import { 
   Card,
@@ -22,6 +21,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { toast } from 'sonner';
 
 interface AdminCalendarProps {
@@ -43,8 +43,6 @@ const AdminCalendar = ({
   const [dateReservations, setDateReservations] = useState<Reservation[]>([]);
   const [highlightedDays, setHighlightedDays] = useState<Date[]>([]);
   
-  // When the component mounts or when the selected room changes,
-  // calculate which days are reserved for the next few months
   useEffect(() => {
     if (!selectedRoom) return;
     
@@ -54,12 +52,10 @@ const AdminCalendar = ({
     
     setCalendarDates(interval);
     
-    // Get all days that have one-time reservations for this room
     const reservedDays = reservations
       .filter(res => res.roomId === selectedRoom)
       .map(res => new Date(res.date));
     
-    // Calculate days with recurring events for this room
     const recurringDays = interval.filter(date => {
       const dayOfWeek = date.getDay();
       
@@ -81,13 +77,11 @@ const AdminCalendar = ({
       });
     });
     
-    // Combine all reserved days
     const allReservedDays = [...reservedDays, ...recurringDays];
     setHighlightedDays(allReservedDays);
     
   }, [selectedRoom, reservations, recurringEvents]);
   
-  // When the selected date changes, filter reservations for that date
   useEffect(() => {
     if (!selectedDate || !selectedRoom) return;
     
@@ -205,6 +199,15 @@ const AdminCalendar = ({
                             <span>{reservation.guestPhone}</span>
                           </div>
                         </div>
+                        
+                        {reservation.eventDescription && (
+                          <div className="mt-3 pt-3 border-t border-border">
+                            <div className="flex items-start gap-2 text-sm">
+                              <FileText className="h-3.5 w-3.5 text-muted-foreground mt-0.5" />
+                              <p className="text-muted-foreground">{reservation.eventDescription}</p>
+                            </div>
+                          </div>
+                        )}
                       </CardContent>
                     </Card>
                   ))}

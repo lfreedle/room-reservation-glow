@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Reservation, RecurringEvent, Room } from '@/types';
 
@@ -32,6 +31,7 @@ const INITIAL_RESERVATIONS: Reservation[] = [
     guestName: "John Doe",
     guestEmail: "john@example.com",
     guestPhone: "123-456-7890",
+    eventDescription: "Community meeting with about 30 attendees",
     createdAt: new Date()
   }
 ];

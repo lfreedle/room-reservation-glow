@@ -10,6 +10,7 @@ import { ReservationFormData } from '@/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import {
   Form,
   FormControl,
@@ -43,6 +44,7 @@ const formSchema = z.object({
   guestName: z.string().min(2, "Name must be at least 2 characters"),
   guestEmail: z.string().email("Please enter a valid email"),
   guestPhone: z.string().min(5, "Please enter a valid phone number"),
+  eventDescription: z.string().optional(),
 });
 
 const timeSlots = [
@@ -71,6 +73,7 @@ const BookingForm = ({ roomId, onSubmit, checkAvailability }: BookingFormProps) 
       guestName: "",
       guestEmail: "",
       guestPhone: "",
+      eventDescription: "",
     },
   });
 
@@ -81,12 +84,18 @@ const BookingForm = ({ roomId, onSubmit, checkAvailability }: BookingFormProps) 
   const handleSubmit = (data: z.infer<typeof formSchema>) => {
     setIsCheckingAvailability(true);
     
+    // Ensure eventDescription is a string (even if empty)
+    const formData: ReservationFormData = {
+      ...data,
+      eventDescription: data.eventDescription || "",
+    };
+    
     // Simulate a slight delay to show the checking state
     setTimeout(() => {
-      const available = checkAvailability(data.date, data.startTime, data.duration);
+      const available = checkAvailability(formData.date, formData.startTime, formData.duration);
       
       if (available) {
-        const success = onSubmit(data);
+        const success = onSubmit(formData);
         if (success) {
           toast.success("Reservation successful!");
           form.reset();
@@ -267,6 +276,24 @@ const BookingForm = ({ roomId, onSubmit, checkAvailability }: BookingFormProps) 
               )}
             />
           </div>
+          
+          <FormField
+            control={form.control}
+            name="eventDescription"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Event Description</FormLabel>
+                <FormControl>
+                  <Textarea 
+                    placeholder="Please describe your event (purpose, number of attendees, etc.)" 
+                    className="min-h-[120px]" 
+                    {...field} 
+                  />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         </div>
 
         <Button 
