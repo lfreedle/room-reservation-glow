@@ -27,7 +27,7 @@ const Header = () => {
         to="/"
         className="text-2xl font-medium tracking-tight transition-opacity hover:opacity-80"
       >
-        Room<span className="text-primary">Reserve</span>
+        GCA<span className="text-primary">CHURCH</span>
       </Link>
       
       <nav className="flex items-center gap-8">

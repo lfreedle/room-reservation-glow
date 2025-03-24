@@ -34,7 +34,7 @@ const Index = () => {
             }}
           >
             <div className="inline-block px-4 py-1.5 mb-4 text-sm font-medium text-primary bg-primary/10 rounded-full">
-              Simple Room Reservations
+              GCA Church Room Reservations
             </div>
           </motion.div>
           
@@ -48,7 +48,7 @@ const Index = () => {
             }}
             className="text-4xl md:text-6xl font-bold tracking-tighter mb-4"
           >
-            Reserve Your Room with Ease
+            Reserve A Room
           </motion.h1>
           
           <motion.p
@@ -61,7 +61,7 @@ const Index = () => {
             }}
             className="max-w-[700px] text-muted-foreground text-lg md:text-xl mb-8"
           >
-            Book the Fellowship Hall or Sanctuary for your next event with our simple reservation system.
+            Book the Fellowship Hall or Sanctuary for your next event!
           </motion.p>
           
           <motion.div
@@ -78,11 +78,6 @@ const Index = () => {
               <Link to="/book">
                 Book Now
                 <ChevronRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
-              </Link>
-            </Button>
-            <Button asChild variant="outline" size="lg">
-              <Link to="/admin">
-                Admin Panel
               </Link>
             </Button>
           </motion.div>
@@ -117,8 +112,8 @@ const Index = () => {
             />
             <FeatureCard 
               icon={<Users className="h-6 w-6" />}
-              title="Add Guest Details"
-              description="Provide your contact information for the reservation."
+              title="Add Event Details"
+              description="Provide your contact and event information."
               index={1}
             />
             <FeatureCard 
