@@ -1,4 +1,3 @@
-
 import type { Config } from "tailwindcss";
 
 export default {
@@ -84,7 +83,7 @@ export default {
 				},
 				'fade-out': {
 					from: { opacity: '1' },
-					to: { opacity: '0' }
+					to: { height: '0' }
 				},
 				'slide-up': {
 					from: { transform: 'translateY(10px)', opacity: '0' },
