@@ -25,7 +25,7 @@ const Header = () => {
     >
       <Link 
         to="/"
-        className="text-2xl font-medium tracking-tight transition-opacity hover:opacity-80"
+        className="text-2xl font-extrabold tracking-tight transition-opacity hover:opacity-80"
       >
         GCA<span className="text-primary">CHURCH</span>
       </Link>
