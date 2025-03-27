@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -44,7 +43,7 @@ const formSchema = z.object({
   guestName: z.string().min(2, "Name must be at least 2 characters"),
   guestEmail: z.string().email("Please enter a valid email"),
   guestPhone: z.string().min(5, "Please enter a valid phone number"),
-  eventDescription: z.string().optional(),
+  eventDescription: z.string().min(1, "Please describe your event"),
 });
 
 const timeSlots = [
@@ -84,13 +83,16 @@ const BookingForm = ({ roomId, onSubmit, checkAvailability }: BookingFormProps) 
   const handleSubmit = (data: z.infer<typeof formSchema>) => {
     setIsCheckingAvailability(true);
     
-    // Ensure eventDescription is a string (even if empty)
     const formData: ReservationFormData = {
-      ...data,
-      eventDescription: data.eventDescription || "",
+      date: data.date,
+      startTime: data.startTime,
+      duration: data.duration,
+      guestName: data.guestName,
+      guestEmail: data.guestEmail,
+      guestPhone: data.guestPhone,
+      eventDescription: data.eventDescription,
     };
     
-    // Simulate a slight delay to show the checking state
     setTimeout(() => {
       const available = checkAvailability(formData.date, formData.startTime, formData.duration);
       
@@ -147,7 +149,6 @@ const BookingForm = ({ roomId, onSubmit, checkAvailability }: BookingFormProps) 
                     selected={field.value}
                     onSelect={field.onChange}
                     disabled={(date) => {
-                      // Disable dates in the past
                       const today = new Date();
                       today.setHours(0, 0, 0, 0);
                       return date < today;
