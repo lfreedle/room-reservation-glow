@@ -7,14 +7,14 @@ const ROOMS: Room[] = [
     id: "fellowship-hall",
     name: "Fellowship Hall",
     description: "A spacious hall perfect for community gatherings, events, and meetings.",
-    image: "/placeholder.svg",
+    image: "https://images.squarespace-cdn.com/content/612fcd1969828e47926e57b4/f88c3aab-e3d4-4fbd-b3c3-d7527abfb1f7/fs02.jpeg?content-type=image/jpeg",
     thankYouMessage: "Thank you for booking the Fellowship Hall. We look forward to hosting your event!"
   },
   {
     id: "sanctuary",
     name: "Sanctuary",
     description: "A serene and beautiful space for worship, ceremonies, and contemplation.",
-    image: "/placeholder.svg",
+    image: "https://images.squarespace-cdn.com/content/612fcd1969828e47926e57b4/906b3394-5ba3-4024-8009-bab9cb79ef92/sy01.jpeg?content-type=image/jpeg",
     thankYouMessage: "Thank you for booking the Sanctuary. We're honored to provide this sacred space for your event."
   }
 ];
