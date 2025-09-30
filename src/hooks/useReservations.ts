@@ -69,17 +69,13 @@ export const useReservations = () => {
 
   const [rooms] = useState<Room[]>(ROOMS);
 
-  // Save to localStorage whenever data changes
+  // Save to localStorage whenever data changes (for deletions and updates)
   useEffect(() => {
     localStorage.setItem('reservations', JSON.stringify(reservations));
-    // Trigger storage event for other tabs/components
-    window.dispatchEvent(new Event('storage'));
   }, [reservations]);
 
   useEffect(() => {
     localStorage.setItem('recurringEvents', JSON.stringify(recurringEvents));
-    // Trigger storage event for other tabs/components
-    window.dispatchEvent(new Event('storage'));
   }, [recurringEvents]);
 
   // Listen for storage changes from other components
@@ -147,6 +143,15 @@ export const useReservations = () => {
   const addReservation = (reservation: Omit<Reservation, 'id' | 'createdAt' | 'endTime'>): boolean => {
     const endTime = calculateEndTime(reservation.startTime, reservation.duration);
     
+    // Re-fetch current reservations from localStorage to avoid race conditions
+    const currentReservations = JSON.parse(
+      localStorage.getItem('reservations') || '[]',
+      (key, value) => {
+        if (key === 'date' || key === 'createdAt') return new Date(value);
+        return value;
+      }
+    );
+    
     if (!isRoomAvailable(reservation.roomId, reservation.date, reservation.startTime, endTime)) {
       return false;
     }
@@ -158,29 +163,48 @@ export const useReservations = () => {
       endTime
     };
     
-    // Update localStorage immediately to prevent race conditions
-    const updatedReservations = [...reservations, newReservation];
+    const updatedReservations = [...currentReservations, newReservation];
     localStorage.setItem('reservations', JSON.stringify(updatedReservations));
     localStorage.setItem('lastReservation', JSON.stringify(newReservation));
-    window.dispatchEvent(new Event('storage'));
     
+    // Update state and trigger storage event for other components
     setReservations(updatedReservations);
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'reservations',
+      newValue: JSON.stringify(updatedReservations),
+      storageArea: localStorage
+    }));
+    
     return true;
   };
 
   // Add a recurring event
   const addRecurringEvent = (event: Omit<RecurringEvent, 'id'>): boolean => {
+    // Re-fetch current events from localStorage to avoid race conditions
+    const currentEvents = JSON.parse(
+      localStorage.getItem('recurringEvents') || '[]',
+      (key, value) => {
+        if (key === 'startDate' || key === 'endDate') return value ? new Date(value) : null;
+        return value;
+      }
+    );
+    
     const newEvent: RecurringEvent = {
       ...event,
       id: crypto.randomUUID()
     };
     
-    // Update localStorage immediately to prevent race conditions
-    const updatedEvents = [...recurringEvents, newEvent];
+    const updatedEvents = [...currentEvents, newEvent];
     localStorage.setItem('recurringEvents', JSON.stringify(updatedEvents));
-    window.dispatchEvent(new Event('storage'));
     
+    // Update state and trigger storage event for other components
     setRecurringEvents(updatedEvents);
+    window.dispatchEvent(new StorageEvent('storage', {
+      key: 'recurringEvents',
+      newValue: JSON.stringify(updatedEvents),
+      storageArea: localStorage
+    }));
+    
     return true;
   };
 
