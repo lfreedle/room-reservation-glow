@@ -8,14 +8,14 @@ const ROOMS: Room[] = [
     name: "Fellowship Hall",
     description: "A spacious hall perfect for community gatherings, events, and meetings.",
     image: "https://images.squarespace-cdn.com/content/612fcd1969828e47926e57b4/f88c3aab-e3d4-4fbd-b3c3-d7527abfb1f7/fs02.jpeg?content-type=image/jpeg",
-    thankYouMessage: "Thank you for booking the Fellowship Hall. We look forward to hosting your event!"
+    thankYouMessage: "Thank you for booking the Fellowship Hall."
   },
   {
     id: "sanctuary",
     name: "Sanctuary",
     description: "A serene and beautiful space for worship, ceremonies, and contemplation.",
     image: "https://images.squarespace-cdn.com/content/612fcd1969828e47926e57b4/906b3394-5ba3-4024-8009-bab9cb79ef92/sy01.jpeg?content-type=image/jpeg",
-    thankYouMessage: "Thank you for booking the Sanctuary. We're honored to provide this sacred space for your event."
+    thankYouMessage: "Thank you for booking the Sanctuary."
   }
 ];
 
@@ -72,11 +72,42 @@ export const useReservations = () => {
   // Save to localStorage whenever data changes
   useEffect(() => {
     localStorage.setItem('reservations', JSON.stringify(reservations));
+    // Trigger storage event for other tabs/components
+    window.dispatchEvent(new Event('storage'));
   }, [reservations]);
 
   useEffect(() => {
     localStorage.setItem('recurringEvents', JSON.stringify(recurringEvents));
+    // Trigger storage event for other tabs/components
+    window.dispatchEvent(new Event('storage'));
   }, [recurringEvents]);
+
+  // Listen for storage changes from other components
+  useEffect(() => {
+    const handleStorageChange = () => {
+      const savedReservations = localStorage.getItem('reservations');
+      const savedRecurring = localStorage.getItem('recurringEvents');
+      
+      if (savedReservations) {
+        const parsed = JSON.parse(savedReservations, (key, value) => {
+          if (key === 'date' || key === 'createdAt') return new Date(value);
+          return value;
+        });
+        setReservations(parsed);
+      }
+      
+      if (savedRecurring) {
+        const parsed = JSON.parse(savedRecurring, (key, value) => {
+          if (key === 'startDate' || key === 'endDate') return value ? new Date(value) : null;
+          return value;
+        });
+        setRecurringEvents(parsed);
+      }
+    };
+
+    window.addEventListener('storage', handleStorageChange);
+    return () => window.removeEventListener('storage', handleStorageChange);
+  }, []);
 
   // Function to check if a room is available at a specific date and time
   const isRoomAvailable = (roomId: string, date: Date, startTime: string, endTime: string): boolean => {

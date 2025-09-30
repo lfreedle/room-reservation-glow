@@ -53,11 +53,8 @@ const ThankYou = () => {
           </h1>
           
           <div className="mb-8 text-center">
-            <p className="text-lg text-muted-foreground mb-4">
-              {room.thankYouMessage}
-            </p>
-            <p className="text-muted-foreground">
-              A confirmation has been sent to the email address you provided.
+            <p className="text-lg text-muted-foreground">
+              Your reservation has been confirmed.
             </p>
           </div>
           

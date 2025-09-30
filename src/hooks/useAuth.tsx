@@ -14,15 +14,10 @@ const ADMIN_USERNAME = "gcachurch";
 const ADMIN_PASSWORD = "awJcZP6qoyizHWeudvgRH49";
 
 export const AuthProvider = ({ children }: { children: ReactNode }) => {
-  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
-
-  // Check if user was previously authenticated
-  useEffect(() => {
-    const authStatus = localStorage.getItem('isAuthenticated');
-    if (authStatus === 'true') {
-      setIsAuthenticated(true);
-    }
-  }, []);
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(() => {
+    // Initialize from localStorage immediately
+    return localStorage.getItem('isAuthenticated') === 'true';
+  });
 
   const login = (username: string, password: string): boolean => {
     if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
