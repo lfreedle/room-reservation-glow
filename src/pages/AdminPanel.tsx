@@ -7,10 +7,11 @@ import { useAuth } from '@/hooks/useAuth';
 import Header from '@/components/Header';
 import AdminCalendar from '@/components/AdminCalendar';
 import RecurringEventForm from '@/components/RecurringEventForm';
+import BlockTimeForm from '@/components/BlockTimeForm';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RecurringEvent } from '@/types';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
-import { CalendarIcon, Clock, CalendarDays, Trash2, LogOut } from 'lucide-react';
+import { CalendarIcon, Clock, CalendarDays, Trash2, LogOut, Ban } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { toast } from 'sonner';
 
@@ -19,6 +20,7 @@ const AdminPanel = () => {
     rooms, 
     reservations, 
     recurringEvents, 
+    addReservation,
     addRecurringEvent,
     deleteReservation,
     deleteRecurringEvent
@@ -37,6 +39,20 @@ const AdminPanel = () => {
   
   const handleAddRecurringEvent = (event: Omit<RecurringEvent, 'id'>) => {
     const success = addRecurringEvent(event);
+    return success;
+  };
+  
+  const handleBlockTime = (data: { roomId: string; date: Date; startTime: string; duration: number; reason?: string }) => {
+    const success = addReservation({
+      roomId: data.roomId,
+      date: data.date,
+      startTime: data.startTime,
+      duration: data.duration,
+      guestName: "⛔ Admin Block",
+      guestEmail: "admin@blocked.com",
+      guestPhone: "N/A",
+      eventDescription: data.reason || "Time blocked by administrator",
+    });
     return success;
   };
   
@@ -83,6 +99,10 @@ const AdminPanel = () => {
             <TabsTrigger value="recurring" className="gap-2">
               <CalendarDays className="h-4 w-4" />
               <span>Recurring Events</span>
+            </TabsTrigger>
+            <TabsTrigger value="block" className="gap-2">
+              <Ban className="h-4 w-4" />
+              <span>Block Time</span>
             </TabsTrigger>
           </TabsList>
           
@@ -166,6 +186,25 @@ const AdminPanel = () => {
                   </CardContent>
                 </Card>
               </div>
+            </div>
+          </TabsContent>
+          
+          <TabsContent value="block" className="animate-fade-in">
+            <div className="max-w-2xl mx-auto">
+              <Card>
+                <CardHeader>
+                  <CardTitle>Block Time Manually</CardTitle>
+                  <CardDescription>
+                    Block off specific dates and times to prevent bookings
+                  </CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <BlockTimeForm 
+                    rooms={rooms}
+                    onSubmit={handleBlockTime}
+                  />
+                </CardContent>
+              </Card>
             </div>
           </TabsContent>
         </Tabs>

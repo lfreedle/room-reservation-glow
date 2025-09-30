@@ -158,7 +158,13 @@ export const useReservations = () => {
       endTime
     };
     
-    setReservations(prev => [...prev, newReservation]);
+    // Update localStorage immediately to prevent race conditions
+    const updatedReservations = [...reservations, newReservation];
+    localStorage.setItem('reservations', JSON.stringify(updatedReservations));
+    localStorage.setItem('lastReservation', JSON.stringify(newReservation));
+    window.dispatchEvent(new Event('storage'));
+    
+    setReservations(updatedReservations);
     return true;
   };
 
@@ -169,7 +175,12 @@ export const useReservations = () => {
       id: crypto.randomUUID()
     };
     
-    setRecurringEvents(prev => [...prev, newEvent]);
+    // Update localStorage immediately to prevent race conditions
+    const updatedEvents = [...recurringEvents, newEvent];
+    localStorage.setItem('recurringEvents', JSON.stringify(updatedEvents));
+    window.dispatchEvent(new Event('storage'));
+    
+    setRecurringEvents(updatedEvents);
     return true;
   };
 
